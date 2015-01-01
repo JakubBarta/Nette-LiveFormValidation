@@ -63,8 +63,11 @@ Nette.getValue = function(elem) {
 		}
 		return values;
 
-		} else if (elem.type in {checkbox: 1, radio: 1}) {
+	} else if (elem.type === 'checkbox') {
 		return elem.checked;
+
+	} else if (elem.type === 'radio') {
+		return elem.checked && elem.value;
 
 	} else if (elem.type === 'file') {
 		return elem.files || elem.value;
@@ -236,11 +239,11 @@ Nette.addError = function(elem, message) {
 
 	// LiveForm: original netteForms.js code
 	/*
-	if (elem.focus) {
-		elem.focus();
-	}
 	if (message) {
 		alert(message);
+	}
+	if (elem.focus) {
+		elem.focus();
 	}
 	*/
 };
@@ -460,7 +463,7 @@ Nette.toggleControl = function(elem, rules, topSuccess, firsttime) {
 			}
 			for (var id2 in rule.toggle || []) {
 				if (__hasProp.call(rule.toggle, id2)) {
-					Nette.toggles[id2] = Nette.toggles[id2] || (success ^ !rule.toggle[id2]);
+					Nette.toggles[id2] = Nette.toggles[id2] || (rule.toggle[id2] ? success : !success);
 				}
 			}
 		}
