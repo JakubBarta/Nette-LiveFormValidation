@@ -1,7 +1,7 @@
 /**
  * Live Form Validation for Nette 2.2
  *
- * @author Radek Ježdík, MartyIX, David Grudl, pavelplzak, Robyer
+ * @author Radek Ježdík, MartyIX, David Grudl, pavelplzak, Robyer, Jakub Barta
  *
  * @changelog
  *   Robyer, 8.8.2014:
