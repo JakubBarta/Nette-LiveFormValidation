@@ -25,9 +25,9 @@
 var LiveForm = {
 	options: {
 		showMessageClassOnParent: 'form-group',              // CSS class of control's parent where error/valid class should be added; or "false" to use control directly
-		controlErrorClass: 'has-error',                      // CSS class for an invalid control
-		errorMessageClass: 'error-message',                  // CSS class for an error message
-		validMessageClass: 'has-success',                    // CSS class for a valid message
+		controlErrorClass: 'form-control-error',                      // CSS class for an invalid control
+		errorMessageClass: 'form-error-message',                  // CSS class for an error message
+		validMessageClass: 'form-valid-message',                    // CSS class for a valid message
 		noLiveValidation:  'no-live-validation',             // CSS class for a valid message
 		showErrorApartClass: 'show-error-apart',             // control with this CSS class will display message in element with ID = errorApartDivPrefix+control's id
 		showErrorApartElementPrefix: 'error-container_',     // prefix for id of div where to display error message
@@ -37,7 +37,8 @@ var LiveForm = {
 		errorMessagePrefix: '<i class="fa fa-warning"></i> ',// show this html before error message itself
 		showAllErrors: true,                                 // show all errors when submitting form; or use "false" to show only first error
 		showValid: false,                                    // show message when valid
-		wait: false                                          // delay in ms before validating on keyup/keydown; or use "false" to disable it
+		wait: false,                                         // delay in ms before validating on keyup/keydown; or use "false" to disable it
+		bootstrap: true										 // should be rendered in Twitter Bootstrap style?
 	},
 
 	forms: { }
@@ -110,8 +111,10 @@ LiveForm.addError = function(el, message) {
 	this.forms[el.form.id].hasError = true;
 	this.addClass(this.getGroupElement(el), this.options.controlErrorClass);
 
-	if (this.options.showValid && this.showValid(el)) {
-		this.removeClass(this.getGroupElement(el), this.options.validMessageClass);
+	if (this.options.bootstrap) {
+            var div = $(el).closest("div");
+            div.addClass("has-error has-feedback");
+            $(el).closest("div").append("<span class=\"glyphicon glyphicon-remove form-control-feedback\"></span>");
 	}
 
 	if (!message) {
@@ -119,9 +122,15 @@ LiveForm.addError = function(el, message) {
 	} else {
 		message = this.options.errorMessagePrefix + message;
 	}
+        var error = this.getMessageElement(el);
 
-	var error = this.getMessageElement(el);
-	error.innerHTML = message;
+        if (this.options.bootstrap) {
+            error.innerHTML = ("<span class=\"help-block error\" >"+message+"</span>");
+        }
+        else {
+            error.innerHTML = message;
+        }
+
 };
 
 LiveForm.removeError = function(el) {
@@ -138,6 +147,13 @@ LiveForm.removeError = function(el) {
 
 	if (err_el) {
 		err_el.parentNode.removeChild(err_el);
+	}
+
+	if (this.options.bootstrap && !$(el).is("input:hidden")) {
+		var div = $(el).closest("div");
+		div.removeClass("has-error has-feedback");
+		div.find("span.glyphicon").remove();
+		$(el).parent().find("span.error").remove();
 	}
 };
 
@@ -193,7 +209,7 @@ LiveForm.getMessageElement = function(el) {
 		}
 	}
 
-	if (el.style.display == 'none') {
+	if ((el.style.display == 'none') && !($(el).is("select"))) {
 		error.style.display = 'none';
 	}
 
